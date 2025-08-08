@@ -30,12 +30,17 @@ public class App {
             }
         }
 
-        // 3. Save updated DOCX into mounted folder
+      
+        // 3. Save updated docx to /app/output
+        File outputDir = new File("output");
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+        
         File outputDocx = new File(outputDir, "output.docx");
         try (FileOutputStream fos = new FileOutputStream(outputDocx)) {
             document.write(fos);
         }
-
         // 4. Convert DOCX to PDF using LibreOffice CLI into mounted folder
         Process process = new ProcessBuilder(
                 "libreoffice",
