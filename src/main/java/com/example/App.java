@@ -31,12 +31,7 @@ public class App {
         }
 
       
-        // 3. Save updated docx to /app/output
-        File outputDir = new File("output");
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
-        }
-        
+       
         File outputDocx = new File(outputDir, "output.docx");
         try (FileOutputStream fos = new FileOutputStream(outputDocx)) {
             document.write(fos);
