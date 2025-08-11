@@ -22,11 +22,35 @@ public class App {
         // 2. Get first table and append rows
         List<XWPFTable> tables = document.getTables();
         if (!tables.isEmpty()) {
+            XWPFTableRow styleRow = table.getRow(table.getNumberOfRows() - 1);
             XWPFTable table = tables.get(0);
             for (int i = 0; i < 2; i++) {
                 XWPFTableRow row = table.createRow();
-                row.getCell(0).setText("Dummy Name " + (i + 1));
-                row.getCell(1).setText("Dummy Value " + (i + 1));
+                 // Copy row properties (borders, height, shading, etc.)
+                if (styleRow.getCtRow().getTrPr() != null) {
+                    newRow.getCtRow().setTrPr(styleRow.getCtRow().getTrPr());
+                }
+                // Ensure same number of cells
+                int cellCount = styleRow.getTableCells().size();
+                for (int c = 0; c < cellCount; c++) {
+                    XWPFTableCell targetCell;
+                    if (c < newRow.getTableCells().size()) {
+                        targetCell = newRow.getCell(c);
+                    } else {
+                        targetCell = newRow.createCell();
+                    }
+            
+                    // Copy cell style
+                    if (styleRow.getCell(c).getCTTc().getTcPr() != null) {
+                        targetCell.getCTTc().setTcPr(styleRow.getCell(c).getCTTc().getTcPr());
+                    }
+            
+                    // Clear old paragraph and insert dummy text
+                    targetCell.removeParagraph(0);
+                    XWPFParagraph p = targetCell.addParagraph();
+                    XWPFRun r = p.createRun();
+                    r.setText("Dummy " + (i + 1) + "," + (c + 1));
+                }
             }
         }
 
