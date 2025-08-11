@@ -6,13 +6,16 @@
     <groupId>DockerProject</groupId>
     <artifactId>dockerproject</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
     <dependencies>
         <!-- Apache POI for DOCX table editing -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>4.1.2</version>
+            <version>5.2.3</version>
         </dependency>
 
       
@@ -22,6 +25,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
         </dependency>
     </dependencies>
 
