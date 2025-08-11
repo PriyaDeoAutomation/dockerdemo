@@ -11,16 +11,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        // Output directory inside container (mounted to host)
-
-        //   String url = "jdbc:postgresql://10.41.11.30:5432/HDFC";
-        // String user = "postgres";
-        // String password = "Priya@321";
-
-       
 
         File outputDir = new File("output");
         if (!outputDir.exists()) {
@@ -30,25 +25,8 @@ public class App {
         String empCode = "253286";
         String empName = "Priya Deo";
         String joiningDate = "Jan-2022";
+        String newImagePath = "/app/imageBg.png";
 
-       
-         // SQL query
-        // String sql = "SELECT employee_number, fls_code FROM employee_details where employee_number="+empCode;
-        //  try (Connection conn = DriverManager.getConnection(url, user, password);
-        //      PreparedStatement pstmt = conn.prepareStatement(sql);
-        //      ResultSet rs = pstmt.executeQuery()) {
-
-        //     while (rs.next()) {
-        //         String empCodeDB = rs.getString("employee_number");
-        //         String empFlsDB = rs.getString("fls_code");
-               
-
-        //         System.out.println(empCodeDB + " | " + empFlsDB );
-        //     }
-
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
         // 1. Load Template.docx
         InputStream templateStream = App.class.getResourceAsStream("/Template.docx");
         if (templateStream == null) {
@@ -77,7 +55,22 @@ public class App {
                 }
             }
         }
+            // Get all pictures
+        List<XWPFPictureData> pictures = document.getAllPictures();
+        if (!pictures.isEmpty()) {
+            // Replace only first image
+            XWPFPictureData firstPic = pictures.get(0);
 
+            byte[] newImageBytes = Files.readAllBytes(new File(newImagePath).toPath());
+
+            // Overwrite the image data in the package part
+            try (OutputStream os = firstPic.getPackagePart().getOutputStream()) {
+                os.write(newImageBytes);
+            }
+            System.out.println("First image replaced successfully!");
+        } else {
+            System.out.println("No images found in document.");
+        }
         
 
         // 2. Get first table and append rows
@@ -154,6 +147,7 @@ public class App {
         try (FileOutputStream fos = new FileOutputStream(outputDocx)) {
             document.write(fos);
         }
+    
 
         // 4. Convert DOCX to PDF using LibreOffice CLI
         Process process = new ProcessBuilder(
